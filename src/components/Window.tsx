@@ -100,13 +100,22 @@ export default function Window({
       <div className="window-titlebar" onMouseDown={handleMouseDown}>
         <span className="window-title">{window.title}</span>
         <div className="window-controls">
-          <button className="window-btn minimize-btn" onClick={onMinimize}>
+          <button className="window-btn minimize-btn" onClick={(e) => {
+            e.stopPropagation();
+            onMinimize();
+          }}>
             _
           </button>
-          <button className="window-btn maximize-btn" onClick={onMaximize}>
+          <button className="window-btn maximize-btn" onClick={(e) => {
+            e.stopPropagation();
+            onMaximize();
+          }}>
             □
           </button>
-          <button className="window-btn close-btn" onClick={onClose}>
+          <button className="window-btn close-btn" onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}>
             ×
           </button>
         </div>

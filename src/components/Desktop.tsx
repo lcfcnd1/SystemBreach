@@ -53,6 +53,9 @@ export default function Desktop() {
   };
 
   const focusWindow = (id: string) => {
+    const targetWindow = windows.find(w => w.id === id);
+    if (!targetWindow) return;
+    
     setWindows(windows.map(w => 
       w.id === id ? { ...w, zIndex: nextZIndex, minimized: false } : w
     ));
