@@ -1,9 +1,11 @@
 export interface DesktopIcon {
   id: string;
   label: string;
-  icon: string;
-  x: number;
-  y: number;
+  position: {
+    x: number;
+    y: number;
+  };
+  icon: null | string;
   appId?: string;
 }
 
