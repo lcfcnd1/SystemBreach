@@ -68,16 +68,6 @@ export default function Desktop() {
     ));
   };
 
-  const handleIconDoubleClick = (iconLabel: string) => {
-    createWindow(
-      iconLabel,
-      <div className="empty-window">
-        <p>Sistema sin contenido</p>
-        <p className="text-dim">Aplicación: {iconLabel}</p>
-      </div>
-    );
-  };
-
   return (
     <div className="desktop">
       <div className="desktop-icons">
@@ -86,9 +76,7 @@ export default function Desktop() {
             key={icon.id}
             label={icon.label}
             icon={icon.icon}
-            x={icon.x}
-            y={icon.y}
-            onDoubleClick={() => handleIconDoubleClick(icon.label)}
+            position={icon.position}
           />
         ))}
       </div>

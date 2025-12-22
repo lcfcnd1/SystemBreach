@@ -88,10 +88,26 @@ body {
   border: 1px solid var(--border-color);
 }
 
+.desktop-icon.pressed {
+  background: rgba(42, 69, 99, 0.5);
+  border: 1px solid var(--text-secondary);
+  transform: scale(0.98);
+}
+
 .icon-image {
   font-size: 32px;
   margin-bottom: 4px;
   text-shadow: 0 0 10px var(--text-primary);
+}
+
+.icon-placeholder {
+  width: 48px;
+  height: 48px;
+  background: var(--secondary-bg);
+  border: 2px solid var(--border-color);
+  box-shadow: 
+    0 0 10px rgba(42, 69, 99, 0.5),
+    inset 0 0 15px rgba(0, 0, 0, 0.5);
 }
 
 .icon-label {
