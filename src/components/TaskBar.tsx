@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { WindowState } from '@/types/system';
 
 interface TaskBarProps {
@@ -8,12 +9,34 @@ interface TaskBarProps {
 }
 
 export default function TaskBar({ windows, onWindowClick }: TaskBarProps) {
-  const now = new Date();
-  const timeString = now.toLocaleTimeString('en-US', { 
-    hour: '2-digit', 
-    minute: '2-digit',
-    hour12: false 
+  const [timeString, setTimeString] = useState(() => {
+    const now = new Date();
+    return now.toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: false 
+    });
   });
+
+  useEffect(() => {
+    const updateClock = () => {
+      const now = new Date();
+      setTimeString(now.toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: false 
+      }));
+    };
+
+    // Actualizar inmediatamente para sincronizar con el minuto actual
+    updateClock();
+
+    // Actualizar cada minuto (60000 ms)
+    const intervalId = setInterval(updateClock, 60000);
+
+    // Limpiar el intervalo cuando el componente se desmonte
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <div className="taskbar">
