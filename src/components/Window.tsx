@@ -23,10 +23,13 @@ export default function Window({
   const [dragging, setDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [position, setPosition] = useState({ x: window.x, y: window.y });
+  const positionRef = useRef({ x: window.x, y: window.y });
   const windowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setPosition({ x: window.x, y: window.y });
+    const newPos = { x: window.x, y: window.y };
+    setPosition(newPos);
+    positionRef.current = newPos;
   }, [window.x, window.y]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -47,13 +50,14 @@ export default function Window({
       const newX = e.clientX - dragOffset.x;
       const newY = e.clientY - dragOffset.y;
       
+      positionRef.current = { x: newX, y: newY };
       setPosition({ x: newX, y: newY });
     };
 
     const handleMouseUp = () => {
       if (dragging) {
         setDragging(false);
-        onDragEnd(position.x, position.y);
+        onDragEnd(positionRef.current.x, positionRef.current.y);
       }
     };
 
