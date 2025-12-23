@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import Window from './Window';
 import TaskBar from './TaskBar';
 import DesktopIcon from './DesktopIcon';
-import { SystemConfig, WindowState } from '@/types/system';
+import { SystemConfig, WindowState, DesktopIcon as DesktopIconType } from '@/types/system';
+import { AppComponents } from './apps';
 
 export default function Desktop() {
   const [systemConfig, setSystemConfig] = useState<SystemConfig | null>(null);
@@ -18,18 +19,35 @@ export default function Desktop() {
       .catch(err => console.error('Error loading system config:', err));
   }, []);
 
-  const createWindow = (title: string, content: React.ReactNode) => {
-    const newWindow: WindowState = {
+  const createWindow = (title: string, content: React.ReactNode, appId?: string) => {
+    // Verificar si la app permite múltiples instancias
+    if (appId && systemConfig) {
+      const app = systemConfig.apps.find(a => a.id === appId);
+      if (app && app.allowMultiple === false) {
+        // Buscar si ya existe una ventana de esta app
+        const existingWindow = windows.find(w => {
+          const windowAppId = (w as any).appId;
+          return windowAppId === appId;
+        });
+        if (existingWindow) {
+          focusWindow(existingWindow.id);
+          return;
+        }
+      }
+    }
+
+    const newWindow: WindowState & { appId?: string } = {
       id: `window-${Date.now()}`,
       title,
       x: 100 + windows.length * 30,
       y: 100 + windows.length * 30,
-      width: 600,
-      height: 400,
+      width: 800,
+      height: 600,
       zIndex: nextZIndex,
       minimized: false,
       maximized: false,
-      content
+      content,
+      appId
     };
     
     setWindows([...windows, newWindow]);
@@ -68,29 +86,110 @@ export default function Desktop() {
     ));
   };
 
-  const handleIconDoubleClick = (iconLabel: string) => {
-    createWindow(
-      iconLabel,
-      <div className="empty-window">
-        <p>Sistema sin contenido</p>
-        <p className="text-dim">Aplicación: {iconLabel}</p>
-      </div>
-    );
+  const handleIconDoubleClick = (icon: DesktopIconType) => {
+    if (!systemConfig) return;
+
+    // Buscar la app asociada
+    const app = icon.appId ? systemConfig.apps.find(a => a.id === icon.appId) : null;
+
+    if (app && app.component) {
+      // Cargar el componente dinámicamente
+      const AppComponent = AppComponents[app.component];
+      
+      if (AppComponent) {
+        let content: React.ReactNode;
+
+        // Pasar props específicas según el componente
+        if (app.component === 'TerminalWindow') {
+          content = <AppComponent systemConfig={systemConfig} />;
+        } else if (app.component === 'FileManager') {
+          // Si hay openFile, usar el directorio padre; si no, usar /home/guest
+          const filePath = icon.openFile || '/home/guest';
+          const dirPath = filePath.includes('/') ? filePath.substring(0, filePath.lastIndexOf('/')) || '/' : '/';
+          content = <AppComponent systemConfig={systemConfig} initialPath={dirPath} />;
+        } else if (app.component === 'TextEditor') {
+          content = <AppComponent systemConfig={systemConfig} initialFile={icon.openFile} />;
+        } else if (app.component === 'WebBrowser') {
+          content = <AppComponent />;
+        } else if (app.component === 'DecryptTool') {
+          content = <AppComponent systemConfig={systemConfig} />;
+        } else if (app.component === 'TrashViewer') {
+          content = <AppComponent />;
+        } else {
+          content = <div className="empty-window">
+            <p>Componente no encontrado: {app.component}</p>
+          </div>;
+        }
+
+        createWindow(app.name, content, app.id);
+      } else {
+        createWindow(
+          app.name,
+          <div className="empty-window">
+            <p>Componente no implementado: {app.component}</p>
+          </div>,
+          app.id
+        );
+      }
+    } else {
+      // Si no hay app asociada, crear ventana genérica
+      createWindow(
+        icon.label,
+        <div className="empty-window">
+          <p>No hay aplicación asociada</p>
+        </div>
+      );
+    }
   };
 
+  // Aplicar estilos del desktop
+  const getDesktopStyle = (): React.CSSProperties => {
+    const background = systemConfig?.desktop.background;
+    if (!background) return {};
+
+    // Verificar si es un color hex
+    if (background.startsWith('#')) {
+      return { backgroundColor: background };
+    }
+
+    // Verificar si es una URL o ruta de imagen
+    if (background.startsWith('http') || background.startsWith('/') || background.includes('.')) {
+      return {
+        backgroundImage: `url(${background})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      };
+    }
+
+    // Si no coincide con ningún patrón, intentar como color
+    return { backgroundColor: background };
+  };
+
+  const desktopStyle = getDesktopStyle();
+  const desktopClassName = `desktop ${systemConfig?.desktop.theme || 'military'}`;
+
   return (
-    <div className="desktop">
+    <div className={desktopClassName} style={desktopStyle}>
       <div className="desktop-icons">
-        {systemConfig?.desktop.icons.map((icon) => (
-          <DesktopIcon
-            key={icon.id}
-            label={icon.label}
-            icon={icon.icon}
-            x={icon.x}
-            y={icon.y}
-            onDoubleClick={() => handleIconDoubleClick(icon.label)}
-          />
-        ))}
+        {systemConfig?.desktop.icons
+          .filter(icon => {
+            // Filtrar iconos de apps ocultas
+            if (icon.appId) {
+              const app = systemConfig.apps.find(a => a.id === icon.appId);
+              return !app?.hidden;
+            }
+            return true;
+          })
+          .map((icon) => (
+            <DesktopIcon
+              key={icon.id}
+              label={icon.label}
+              icon={icon.icon}
+              x={icon.x}
+              y={icon.y}
+              onDoubleClick={() => handleIconDoubleClick(icon)}
+            />
+          ))}
       </div>
 
       {windows.map((window) => (

@@ -1,3 +1,9 @@
+export interface SystemInfo {
+  name: string;
+  version: string;
+  hostname: string;
+}
+
 export interface DesktopIcon {
   id: string;
   label: string;
@@ -5,6 +11,7 @@ export interface DesktopIcon {
   x: number;
   y: number;
   appId?: string;
+  openFile?: string;
 }
 
 export interface App {
@@ -12,19 +19,45 @@ export interface App {
   name: string;
   icon: string;
   component?: string;
+  allowMultiple?: boolean;
+  hidden?: boolean;
+}
+
+export interface FileSystemNode {
+  type: 'file' | 'directory';
+  content?: string;
+  permissions?: {
+    read: boolean;
+    write: boolean;
+    execute?: boolean;
+  };
+  metadata?: Record<string, any>;
+  children?: Record<string, FileSystemNode>;
+}
+
+export interface TerminalCommand {
+  name: string;
+  description: string;
+  handler: string;
+  args: string[];
 }
 
 export interface SystemConfig {
+  systemInfo?: SystemInfo;
   desktop: {
+    background?: string;
+    theme?: string;
     icons: DesktopIcon[];
   };
   apps: App[];
-  filesystem: Record<string, any>;
-  terminal: {
-    commands: any[];
+  filesystem: {
+    root: FileSystemNode;
   };
-  puzzles: any[];
-  secrets: any[];
+  terminal: {
+    commands: TerminalCommand[];
+  };
+  puzzles?: Record<string, any>;
+  secrets?: Record<string, any>;
 }
 
 export interface WindowState {

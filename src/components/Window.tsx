@@ -79,7 +79,7 @@ export default function Window({
         left: 0,
         top: 0,
         width: '100%',
-        height: 'calc(100% - 40px)',
+        height: 'calc(100% - 36px)',
         zIndex: window.zIndex
       }
     : {

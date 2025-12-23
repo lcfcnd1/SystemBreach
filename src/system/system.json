@@ -1,12 +1,284 @@
 {
+  "systemInfo": {
+    "name": "NullOS v3.2",
+    "version": "3.2.1-stable",
+    "hostname": "workstation-alpha"
+  },
   "desktop": {
-    "icons": []
+    "background": "#1f8062",
+    "theme": "dark-cyber",
+    "icons": [
+      {
+        "id": "icon_terminal",
+        "label": "Terminal",
+        "icon": "terminal_icon.svg",
+        "x": 20,
+        "y": 20,
+        "appId": "app_terminal"
+      },
+      {
+        "id": "icon_files",
+        "label": "Archivos",
+        "icon": "folder_icon.svg",
+        "x": 20,
+        "y": 110,
+        "appId": "app_files"
+      },
+      {
+        "id": "icon_browser",
+        "label": "DarkNet Web",
+        "icon": "globe_icon.svg",
+        "x": 20,
+        "y": 200,
+        "appId": "app_browser"
+      },
+      {
+        "id": "icon_notes",
+        "label": "Notas",
+        "icon": "notepad_icon.svg",
+        "x": 20,
+        "y": 290,
+        "appId": "app_editor"
+      },
+      {
+        "id": "icon_mission",
+        "label": "LEEME.txt",
+        "icon": "txt_file_icon.svg",
+        "x": 120,
+        "y": 20,
+        "appId": "app_editor",
+        "openFile": "/home/guest/mission_brief.txt"
+      },
+      {
+        "id": "icon_bin",
+        "label": "Papelera",
+        "icon": "trash_icon.svg",
+        "x": 20,
+        "y": 800,
+        "appId": "app_trash"
+      }
+    ]
   },
-  "apps": [],
-  "filesystem": {},
+  "apps": [
+    {
+      "id": "app_terminal",
+      "name": "Terminal",
+      "icon": "terminal_icon.svg",
+      "component": "TerminalWindow",
+      "allowMultiple": true
+    },
+    {
+      "id": "app_files",
+      "name": "Explorador de Archivos",
+      "icon": "folder_icon.svg",
+      "component": "FileManager",
+      "allowMultiple": false
+    },
+    {
+      "id": "app_editor",
+      "name": "TextPad",
+      "icon": "notepad_icon.svg",
+      "component": "TextEditor",
+      "allowMultiple": true
+    },
+    {
+      "id": "app_browser",
+      "name": "Onion Browser",
+      "icon": "globe_icon.svg",
+      "component": "WebBrowser",
+      "allowMultiple": false
+    },
+    {
+      "id": "app_decryptor",
+      "name": "HashBreaker v1",
+      "icon": "lock_open_icon.svg",
+      "component": "DecryptTool",
+      "hidden": true
+    },
+    {
+      "id": "app_trash",
+      "name": "Papelera",
+      "icon": "trash_icon.svg",
+      "component": "TrashViewer",
+      "allowMultiple": false
+    }
+  ],
+  "filesystem": {
+    "root": {
+      "type": "directory",
+      "permissions": { "read": true, "write": false, "execute": true },
+      "children": {
+        "bin": {
+          "type": "directory",
+          "permissions": { "read": true, "write": false },
+          "children": {
+            "ssh": { "type": "file", "content": "BINARY_SSH_CLIENT" },
+            "nmap": { "type": "file", "content": "BINARY_NMAP_SCANNER" },
+            "grep": { "type": "file", "content": "BINARY_GREP" }
+          }
+        },
+        "etc": {
+          "type": "directory",
+          "permissions": { "read": true, "write": false },
+          "children": {
+            "passwd": {
+              "type": "file",
+              "content": "root:x:0:0:root:/root:/bin/bash\nguest:x:1000:1000:guest:/home/guest:/bin/bash\nsysadmin:x:1001:1001:sysadmin:/home/sysadmin:/bin/bash",
+              "permissions": { "read": true, "write": false }
+            },
+            "shadow": {
+              "type": "file",
+              "content": "PERMISSION DENIED",
+              "permissions": { "read": false, "write": false }
+            },
+            "hosts": {
+              "type": "file",
+              "content": "127.0.0.1 localhost\n192.168.1.55 corp-database-int",
+              "permissions": { "read": true, "write": false }
+            }
+          }
+        },
+        "home": {
+          "type": "directory",
+          "permissions": { "read": true, "write": true },
+          "children": {
+            "guest": {
+              "type": "directory",
+              "permissions": { "read": true, "write": true },
+              "children": {
+                "mission_brief.txt": {
+                  "type": "file",
+                  "content": "AGENTE: Tu objetivo es acceder al servidor 'corp-database-int'.\nHemos detectado tráfico inusual en los logs del sistema.\nBusca pistas en /var/log y no dejes rastro.\n\n- The Watcher"
+                },
+                "todo.txt": {
+                  "type": "file",
+                  "content": "1. Actualizar firewall\n2. Borrar logs antiguos\n3. Cambiar contraseña del servidor (Recordatorio: usar fecha de fundación de la empresa)"
+                },
+                "tools": {
+                  "type": "directory",
+                  "children": {
+                    "payload.js": { "type": "file", "content": "console.log('Iniciando inyección...');" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "var": {
+          "type": "directory",
+          "children": {
+            "log": {
+              "type": "directory",
+              "children": {
+                "syslog": {
+                  "type": "file",
+                  "content": "[INFO] System boot success\n[WARN] Failed SSH attempt from 192.168.1.55 user: admin\n[INFO] Backup saved to /var/backups/shadow_backup.old",
+                  "permissions": { "read": true, "write": false }
+                },
+                "auth.log": {
+                  "type": "file",
+                  "content": "Encrypted log file. Use decryption key.",
+                  "metadata": { "encrypted": true, "keyId": "auth_key" }
+                }
+              }
+            },
+            "backups": {
+              "type": "directory",
+              "children": {
+                "shadow_backup.old": {
+                  "type": "file",
+                  "content": "root:$6$hJ8s... (HASH PARCIAL)\nsysadmin:$6$Kb2... (HASH COMPLETO: 'ilovecats123')",
+                  "permissions": { "read": true, "write": false }
+                }
+              }
+            }
+          }
+        },
+        "root": {
+          "type": "directory",
+          "permissions": { "read": false, "write": false },
+          "children": {}
+        }
+      }
+    }
+  },
   "terminal": {
-    "commands": []
+    "commands": [
+      {
+        "name": "help",
+        "description": "Muestra la lista de comandos disponibles",
+        "handler": "helpHandler",
+        "args": []
+      },
+      {
+        "name": "ls",
+        "description": "Lista el contenido del directorio",
+        "handler": "lsHandler",
+        "args": ["path?"]
+      },
+      {
+        "name": "cd",
+        "description": "Cambia el directorio actual",
+        "handler": "cdHandler",
+        "args": ["path"]
+      },
+      {
+        "name": "cat",
+        "description": "Muestra el contenido de un archivo",
+        "handler": "catHandler",
+        "args": ["filename"]
+      },
+      {
+        "name": "pwd",
+        "description": "Muestra la ruta del directorio actual",
+        "handler": "pwdHandler",
+        "args": []
+      },
+      {
+        "name": "ssh",
+        "description": "Inicia conexión segura con servidor remoto",
+        "handler": "sshHandler",
+        "args": ["user@host"]
+      },
+      {
+        "name": "scan",
+        "description": "Escanea puertos o vulnerabilidades de red",
+        "handler": "scanHandler",
+        "args": ["target"]
+      },
+      {
+        "name": "crack",
+        "description": "Intenta romper un hash de contraseña",
+        "handler": "crackHandler",
+        "args": ["hash"]
+      },
+      {
+        "name": "clear",
+        "description": "Limpia la pantalla de la terminal",
+        "handler": "clearHandler",
+        "args": []
+      }
+    ]
   },
-  "puzzles": [],
-  "secrets": []
+  "puzzles": {
+    "puzzle_01_login": {
+      "id": "p1",
+      "description": "Encontrar la contraseña del usuario sysadmin",
+      "hint": "Revisar backups antiguos en /var/backups",
+      "solution": "ilovecats123",
+      "reward": "access_level_2"
+    },
+    "puzzle_02_server": {
+      "id": "p2",
+      "description": "Conectarse al servidor de base de datos",
+      "requires": ["p1"],
+      "targetIP": "192.168.1.55",
+      "command": "ssh sysadmin@192.168.1.55"
+    }
+  },
+  "secrets": {
+    "flag_1": "CTF{w3lc0m3_t0_th3_m4tr1x}",
+    "root_password": "correcthorsebatterystaple",
+    "hidden_folder": ".secret_stash"
+  }
 }

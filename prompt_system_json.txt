@@ -1,0 +1,59 @@
+PROMPT PARA GENERAR system.json
+
+Genera un archivo JSON llamado system.json que defina la configuración completa de un sistema operativo simulado para un juego de hacking/cybersecurity. El archivo debe tener la siguiente estructura:
+
+{
+  "desktop": {
+    "icons": [
+      // Array de objetos DesktopIcon que representan los iconos en el escritorio
+      // Cada icono debe tener:
+      // - id: string único identificador
+      // - label: string nombre visible del icono
+      // - icon: string nombre o ruta del icono
+      // - x: number posición X en el escritorio
+      // - y: number posición Y en el escritorio
+      // - appId?: string (opcional) ID de la aplicación asociada si es un acceso directo
+    ]
+  },
+  "apps": [
+    // Array de objetos App que representan las aplicaciones disponibles
+    // Cada app debe tener:
+    // - id: string único identificador
+    // - name: string nombre de la aplicación
+    // - icon: string nombre o ruta del icono
+    // - component?: string (opcional) componente React asociado
+  ],
+  "filesystem": {
+    // Objeto que representa la estructura del sistema de archivos
+    // Puede contener directorios y archivos anidados
+    // Cada archivo/directorio puede tener propiedades como:
+    // - type: "file" | "directory"
+    // - content: string (para archivos)
+    // - children: objeto (para directorios)
+    // - permissions: objeto con permisos
+    // - metadata: objeto con información adicional
+  },
+  "terminal": {
+    "commands": [
+      // Array de objetos que definen los comandos disponibles en la terminal
+      // Cada comando debe tener:
+      // - name: string nombre del comando
+      // - description: string descripción del comando
+      // - handler: string o función que ejecuta el comando
+      // - args?: array de argumentos aceptados
+    ]
+  },
+  "puzzles":{},
+  "secrets":{},
+}
+
+
+INSTRUCCIONES ADICIONALES:
+- Todos los IDs deben ser únicos dentro de su contexto
+- Las posiciones X e Y de los iconos deben ser valores numéricos razonables (ej: 0-1000)
+- El filesystem debe tener una estructura lógica y coherente con directorios básicos como /home, /etc, /var, etc.
+- Los comandos de terminal deben ser relevantes para un entorno de hacking/cybersecurity (ej: ls, cd, cat, grep, find, etc.)
+- Las apps deben tener iconos y nombres coherentes
+- Los iconos del desktop deben estar correctamente posicionados y asociados a sus apps correspondientes mediante appId
+- Mantén la coherencia temática en todo el sistema
+
